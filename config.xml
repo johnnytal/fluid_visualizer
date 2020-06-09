@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<widget id="phonegap.ilyich.fluid" version="1.0" android-versionCode="100001" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+		<name>Fluid audio visualizer</name>
+		<description>Visualizer</description>
+		<author email="johnnytal9@gmail.com" href="http://www.ilyichgames.com"> Johnny Tal </author>
+		<content src="index.html"/>
+		
+		<access origin="*"/>
+		<allow-intent href="http://*/*"/>
+		<allow-intent href="https://*/*"/>
+		<allow-intent href="tel:*"/>
+		<allow-intent href="sms:*"/>
+		<allow-intent href="mailto:*"/>
+		<allow-intent href="geo:*"/>
+		
+		<platform name="android">
+			<allow-intent href="market:*"/>
+			<preference name="enabled" value="true"/>
+		</platform>
+		<platform name="ios">
+			<allow-intent href="itms:*"/>
+			<allow-intent href="itms-apps:*"/>
+		</platform>
+		
+		<preference name="Fullscreen" value="true"/>
+		<preference name="Orientation" value="portrait"/>
+		<preference name="android-build-tool" value="gradle" />
+		<preference name="android-targetSdkVersion" value="28"/>
+		<preference name="android-minSdkVersion" value="16"/>
+		<preference name="android-build-tool" value="gradle" />
+		<preference name="phonegap-version" value="cli-7.1.0" />
+
+		<plugin name="cordova-plugin-insomnia" spec="*"/>
+		<plugin name="cordova-plugin-statusbar" spec="*"/>
+		<plugin name="cordova-plugin-extension" spec="*"/>
+		<plugin name="cordova-plugin-android-permissions" spec="*"/>
+		<plugin name="cordova-plugin-whitelist" version="1"/>
+		<plugin name="cordova-plugin-audioinput" version="*"/>
+		<plugin name="cordova-plugin-media" version="*"/>
+		
+		<!--<plugin name="cordova-plugin-admobpro" source="npm">
+			<variable name="ADMOB_APP_ID" value="ca-app-pub-9795366520625065~5264585618" />
+			<variable name="PLAY_SERVICES_VERSION" value="16.0.0" />
+		</plugin>-->
+
+		<icon src="512x512.png" />
+	</widget>
