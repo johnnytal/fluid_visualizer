@@ -65,7 +65,9 @@ if (!ext.supportLinearFiltering) {
 
 //startGUI();
 
-setTimeout(function(){
+document.addEventListener("deviceready", startMic, false);
+
+function startMic(){
 	try{
 		window.audioinput.checkMicrophonePermission(function(hasPermission) {
 			if (hasPermission){
@@ -77,16 +79,26 @@ setTimeout(function(){
 						webaudio_tooling_obj();		
 		        	}
 		        	else{
-		        		alert('Permission needed for app to work...');
+		        		alert('Microphone permission needed for app to work!');
 		        	}
 		        });
 		    }
 		});
 	} catch(e){
-		alert(e + ' Please give microphone permission via Settings > Apps');
-	}
-}, 1500)
+		alert('Please give microphone permission via Settings > Apps ' + e);
+	}	
 
+	setTimeout(function(){
+		try{
+            StatusBar.hide;
+        } catch(e){} 
+        try{
+            window.plugins.insomnia.keepAwake();
+        } catch(e){}   
+        
+    	initAd();
+	}, 1000);
+}
 
 /*setInterval(function(){
     BLOOM_ITERATIONS = Math.round(averageValue);
@@ -1567,3 +1579,15 @@ function hashCode (s) {
     }
     return hash;
 };
+
+function initAd(){
+	admobid = {
+      banner: 'ca-app-pub-9795366520625065/7943701608',
+    };
+    
+    if(AdMob) AdMob.createBanner({
+	    adId: admobid.banner,
+	    position: AdMob.AD_POSITION.BOTTOM_CENTER,
+    	autoShow: true 
+	});
+}

@@ -38,10 +38,10 @@
 		<plugin name="cordova-plugin-audioinput" version="*"/>
 		<plugin name="cordova-plugin-media" version="*"/>
 		
-		<!--<plugin name="cordova-plugin-admobpro" source="npm">
-			<variable name="ADMOB_APP_ID" value="ca-app-pub-9795366520625065~5264585618" />
+		<plugin name="cordova-plugin-admobpro" source="npm">
+			<variable name="ADMOB_APP_ID" value="ca-app-pub-9795366520625065~9256783274" />
 			<variable name="PLAY_SERVICES_VERSION" value="16.0.0" />
-		</plugin>-->
+		</plugin>
 
 		<icon src="512x512.png" />
 	</widget>
