@@ -63,7 +63,7 @@ if (!ext.supportLinearFiltering) {
     config.SUNRAYS = false;
 }
 
-//startGUI();
+startGUI();
 
 document.addEventListener("deviceready", startMic, false);
 
