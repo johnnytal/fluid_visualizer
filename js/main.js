@@ -65,25 +65,28 @@ if (!ext.supportLinearFiltering) {
 
 //startGUI();
 
-try{
-	window.audioinput.checkMicrophonePermission(function(hasPermission) {
-		if (hasPermission){
-			webaudio_tooling_obj();
-		}
-	    else{
-	        window.audioinput.getMicrophonePermission(function(hasPermission, message) {
-	        	if (hasPermission) {
-					webaudio_tooling_obj();		
-	        	}
-	        	else{
-	        		alert('Permission needed for app to work...');
-	        	}
-	        });
-	    }
-	});
-} catch(e){
-	alert('Please give microphone permission via Settings > Apps');
-}
+setTimeout(function(){
+	try{
+		window.audioinput.checkMicrophonePermission(function(hasPermission) {
+			if (hasPermission){
+				webaudio_tooling_obj();
+			}
+		    else{
+		        window.audioinput.getMicrophonePermission(function(hasPermission, message) {
+		        	if (hasPermission) {
+						webaudio_tooling_obj();		
+		        	}
+		        	else{
+		        		alert('Permission needed for app to work...');
+		        	}
+		        });
+		    }
+		});
+	} catch(e){
+		alert(e + ' Please give microphone permission via Settings > Apps');
+	}
+}, 1500)
+
 
 /*setInterval(function(){
     BLOOM_ITERATIONS = Math.round(averageValue);
