@@ -73,9 +73,7 @@ try{
 	    else{
 	        window.audioinput.getMicrophonePermission(function(hasPermission, message) {
 	        	if (hasPermission) {
-					createFruits();
 					webaudio_tooling_obj();		
-					timerStuff();
 	        	}
 	        	else{
 	        		alert('Permission needed for app to work...');
