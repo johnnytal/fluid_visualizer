@@ -8,7 +8,7 @@ var AMOUNT = 100;
 
 let config = {
     SIM_RESOLUTION: 32,
-    DYE_RESOLUTION: 256, // low quality
+    DYE_RESOLUTION: 512, // low quality
     CAPTURE_RESOLUTION: 128,
     DENSITY_DISSIPATION: 1,
     VELOCITY_DISSIPATION: 0.2,

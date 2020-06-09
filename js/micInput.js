@@ -34,7 +34,7 @@ function webaudio_tooling_obj() {
               start_microphone(stream);
           },
           function(e) {
-            alert(e);
+              alert('getUserMedia: ' + e);
           }
         );
 
@@ -121,4 +121,3 @@ function webaudio_tooling_obj() {
          };      
      }
 }
-
