@@ -69,11 +69,11 @@ function webaudio_tooling_obj() {
 	      	 array = new Uint8Array(analyserNode.frequencyBinCount);
 	      	 analyserNode.getByteFrequencyData(array);
 
-             for (var i = 0; i < AMOUNT; i++) {
+             for (var i = 0; i < array.length - 1; i++) {
             	 averageValue += array[i];
              }
              
-             averageValue = averageValue / AMOUNT;
+             averageValue = averageValue / array.length - 1;
               
              splats_n = parseInt(Math.round(averageValue / 42));
              

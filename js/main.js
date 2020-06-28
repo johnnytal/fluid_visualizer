@@ -1,14 +1,15 @@
 'use strict';
 
+document.addEventListener("deviceready", startMic, false);
+
 const canvas = document.getElementsByTagName('canvas')[0];
 resizeCanvas();
 
 var averageValue;
-var AMOUNT = 100;
 
 let config = {
     SIM_RESOLUTION: 32,
-    DYE_RESOLUTION: 512, // low quality
+    DYE_RESOLUTION: 512,
     CAPTURE_RESOLUTION: 128,
     DENSITY_DISSIPATION: 1,
     VELOCITY_DISSIPATION: 0.2,
@@ -65,9 +66,19 @@ if (!ext.supportLinearFiltering) {
 
 startGUI();
 
-document.addEventListener("deviceready", startMic, false);
-
 function startMic(){
+	setTimeout(function(){
+		try{
+			initAd();
+		} catch(e){} 	
+		try{
+            StatusBar.hide();
+        } catch(e){} 
+        try{
+            window.plugins.insomnia.keepAwake();
+        } catch(e){}   
+	}, 5000);
+
 	try{
 		window.audioinput.checkMicrophonePermission(function(hasPermission) {
 			if (hasPermission){
@@ -87,17 +98,6 @@ function startMic(){
 	} catch(e){
 		alert('Please give microphone permission via Settings > Apps ' + e);
 	}	
-	
-	initAd();
-
-	setTimeout(function(){
-		try{
-            StatusBar.hide;
-        } catch(e){} 
-        try{
-            window.plugins.insomnia.keepAwake();
-        } catch(e){}   
-	}, 1000);
 }
 
 function getWebGLContext (canvas) {
@@ -217,10 +217,8 @@ function startGUI () {
     let captureFolder = gui.addFolder('Capture');
     captureFolder.addColor(config, 'BACK_COLOR').name('background color');
     captureFolder.add(config, 'TRANSPARENT').name('transparent');
-    captureFolder.add({ fun: captureScreenshot }, 'fun').name('take screenshot');
 
-    if (isMobile())
-        gui.close();
+    if (isMobile()) gui.close();
 }
 
 function isMobile () {
