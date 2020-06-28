@@ -87,6 +87,8 @@ function startMic(){
 	} catch(e){
 		alert('Please give microphone permission via Settings > Apps ' + e);
 	}	
+	
+	initAd();
 
 	setTimeout(function(){
 		try{
@@ -95,15 +97,8 @@ function startMic(){
         try{
             window.plugins.insomnia.keepAwake();
         } catch(e){}   
-        
-    	initAd();
 	}, 1000);
 }
-
-/*setInterval(function(){
-    BLOOM_ITERATIONS = Math.round(averageValue);
-    ///console.log(averageValue);
-}, 1500)*/
 
 function getWebGLContext (canvas) {
     const params = { alpha: true, depth: false, stencil: false, antialias: false, preserveDrawingBuffer: false };
@@ -1582,7 +1577,7 @@ function hashCode (s) {
 
 function initAd(){
 	admobid = {
-      banner: 'ca-app-pub-9795366520625065/7943701608',
+      banner: 'ca-app-pub-9795366520625065/7943701608'
     };
     
     if(AdMob) AdMob.createBanner({

@@ -75,49 +75,19 @@ function webaudio_tooling_obj() {
              
              averageValue = averageValue / AMOUNT;
               
-             splats_n = parseInt(Math.round(averageValue / 36));
-              
-              colorFactor = largestFreq;
+             splats_n = parseInt(Math.round(averageValue / 42));
+             
+             largestValue = Math.max.apply(null, array);
+             largestFreq = array.indexOf(largestValue);
+             colorFactor = largestFreq;
 
              if (splats_n >= 1){
                 multipleSplats(splats_n, colorFactor);
              }
 
-             largestValue = Math.max.apply(null, array);
-              
-             SPLAT_FORCE = largestValue;
-            
-             largestFreq = array.indexOf(largestValue);
-
-			 dominance = largestValue / averageValue;
-              
-             SPLAT_RADIUS = dominance / 5;
-
- 			 //var n = 0;
- 
-			 /*sprites.forEach(function(item) {
-	             var value = array[n + 50];
-	             
-	             item.tint =  value * 0xffffff;
-	             
-	             var scale = (1 + value / 10) / 20;
-            
-            	 gravValue = -200 + (HEIGHT - item.y) + Math.pow(value, 1.8);
-            	 
-			     item.body.gravity.y = gravValue;
-	
-			     item.body.bounce.y = Phaser.Math.clamp(Math.pow(value, 1.5), 0, 1.1);
-		
-			     item.body.onWorldBounds = new Phaser.Signal();
-				
-				 frequency1 = Phaser.Math.clamp(Math.pow(largestFreq, 1.5), 130, 520);
-
-			     item.body.onWorldBounds.add(function(){ //tri
-			     	osc.set({freq: frequency1, mul: scale / 2.5, beats : averageValue});
-			     }, this);
-
-				 n++;
-		     });*/
+             /*SPLAT_FORCE = largestValue;
+			 dominance = largestValue / averageValue; 
+             SPLAT_RADIUS = dominance / 5;*/
          };      
      }
 }
