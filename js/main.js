@@ -1,5 +1,3 @@
-'use strict';
-
 document.addEventListener("deviceready", startMic, false);
 
 const canvas = document.getElementsByTagName('canvas')[0];
@@ -8,7 +6,7 @@ resizeCanvas();
 var averageValue;
 
 let config = {
-    SIM_RESOLUTION: 32,
+    SIM_RESOLUTION: 128,
     DYE_RESOLUTION: 512,
     CAPTURE_RESOLUTION: 128,
     DENSITY_DISSIPATION: 1,
@@ -21,7 +19,6 @@ let config = {
     SHADING: true,
     COLORFUL: true,
     COLOR_UPDATE_SPEED: 45,
-    PAUSED: false,
     BACK_COLOR: { r: 0, g: 0, b: 0 },
     TRANSPARENT: false,
     BLOOM: false,
@@ -67,18 +64,8 @@ if (!ext.supportLinearFiltering) {
 startGUI();
 
 function startMic(){
-	setTimeout(function(){
-		try{
-			initAd();
-		} catch(e){} 	
-		try{
-            StatusBar.hide();
-        } catch(e){} 
-        try{
-            window.plugins.insomnia.keepAwake();
-        } catch(e){}   
-	}, 5000);
-
+	loadPlugins();
+	
 	try{
 		window.audioinput.checkMicrophonePermission(function(hasPermission) {
 			if (hasPermission){
@@ -98,6 +85,17 @@ function startMic(){
 	} catch(e){
 		alert('Please give microphone permission via Settings > Apps ' + e);
 	}	
+}
+
+function loadPlugins(){
+	initAd();
+	
+	try{
+        StatusBar.hide();
+    } catch(e){} 
+    try{
+        window.plugins.insomnia.keepAwake();
+    } catch(e){}   
 }
 
 function getWebGLContext (canvas) {
@@ -199,7 +197,6 @@ function startGUI () {
     gui.add(config, 'SPLAT_RADIUS', 0.01, 1.0).name('splat radius');
     gui.add(config, 'SHADING').name('shading').onFinishChange(updateKeywords);
     gui.add(config, 'COLORFUL').name('colorful');
-    gui.add(config, 'PAUSED').name('paused').listen();
 
     gui.add({ fun: () => {
         splatStack.push(parseInt(Math.random() * 20) + 5);
@@ -223,20 +220,6 @@ function startGUI () {
 
 function isMobile () {
     return /Mobi|Android/i.test(navigator.userAgent);
-}
-
-function captureScreenshot () {
-    let res = getResolution(config.CAPTURE_RESOLUTION);
-    let target = createFBO(res.width, res.height, ext.formatRGBA.internalFormat, ext.formatRGBA.format, ext.halfFloatTexType, gl.NEAREST);
-    render(target);
-
-    let texture = framebufferToTexture(target);
-    texture = normalizeTexture(texture, target.width, target.height);
-
-    let captureCanvas = textureToCanvas(texture, target.width, target.height);
-    let datauri = captureCanvas.toDataURL();
-    downloadURI('fluid.png', datauri);
-    URL.revokeObjectURL(datauri);
 }
 
 function framebufferToTexture (target) {
@@ -1095,8 +1078,7 @@ function update () {
         initFramebuffers();
     updateColors(dt);
     applyInputs();
-    if (!config.PAUSED)
-        step(dt);
+    step(dt);
     render(null);
     requestAnimationFrame(update);
 }
@@ -1444,13 +1426,6 @@ window.addEventListener('touchend', e => {
     }
 });
 
-window.addEventListener('keydown', e => {
-    if (e.code === 'KeyP')
-        config.PAUSED = !config.PAUSED;
-    if (e.key === ' ')
-        splatStack.push(parseInt(Math.random() * 20) + 5);
-});
-
 function updatePointerDownData (pointer, id, posX, posY) {
     pointer.id = id;
     pointer.down = true;
@@ -1575,12 +1550,12 @@ function hashCode (s) {
 
 function initAd(){
 	admobid = {
-      banner: 'ca-app-pub-9795366520625065/7943701608'
+    	banner: 'ca-app-pub-9795366520625065/7943701608'
     };
     
     if(AdMob) AdMob.createBanner({
 	    adId: admobid.banner,
 	    position: AdMob.AD_POSITION.BOTTOM_CENTER,
-    	autoShow: true 
+    	autoShow: true
 	});
 }

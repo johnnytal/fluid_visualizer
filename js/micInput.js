@@ -75,7 +75,7 @@ function webaudio_tooling_obj() {
              
              averageValue = averageValue / array.length - 1;
               
-             splats_n = parseInt(Math.round(averageValue / 42));
+             splats_n = parseInt(Math.round(averageValue / 40));
              
              largestValue = Math.max.apply(null, array);
              largestFreq = array.indexOf(largestValue);
