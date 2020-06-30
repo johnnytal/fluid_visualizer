@@ -59,6 +59,7 @@ if (!ext.supportLinearFiltering) {
     config.SHADING = false;
     config.BLOOM = false;
     config.SUNRAYS = false;
+
 }
 
 startGUI();
@@ -66,25 +67,32 @@ startGUI();
 function startMic(){
 	loadPlugins();
 	
-	try{
-		window.audioinput.checkMicrophonePermission(function(hasPermission) {
-			if (hasPermission){
-				webaudio_tooling_obj();
-			}
-		    else{
-		        window.audioinput.getMicrophonePermission(function(hasPermission, message) {
-		        	if (hasPermission) {
-						webaudio_tooling_obj();		
-		        	}
-		        	else{
-		        		alert('Microphone permission needed for app to work!');
-		        	}
-		        });
-		    }
-		});
-	} catch(e){
-		alert('Please give microphone permission via Settings > Apps ' + e);
-	}	
+	if (isMobile()){
+		try{
+			window.audioinput.checkMicrophonePermission(function(hasPermission) {
+				if (hasPermission){
+					webaudio_tooling_obj();
+				}
+			    else{
+			        window.audioinput.getMicrophonePermission(function(hasPermission, message) {
+			        	if (hasPermission) {
+							webaudio_tooling_obj();		
+			        	}
+			        	else{
+			        		alert('Microphone permission needed for app to work!');
+			        	}
+			        });
+			    }
+			});
+		} catch(e){
+			alert('Please give microphone permission via Settings > Apps ' + e);
+		}	
+	}
+	else{
+		setTimeout(function(){
+			getDevices();
+		}, 500);
+	}
 }
 
 function loadPlugins(){
@@ -1332,12 +1340,14 @@ function splatPointer (pointer) {
     splat(pointer.texcoordX, pointer.texcoordY, dx, dy, pointer.color);
 }
 
-function multipleSplats (amount, colorFactor) {
+function multipleSplats (amount) {
     for (let i = 0; i < amount; i++) {
+ 
         const color = generateColor();
         color.r *= 10.0;
         color.g *= 10.0;
         color.b *= 10.0;
+
         const x = Math.random();
         const y = Math.random();
         const dx = 1000 * (Math.random() - 0.5);
@@ -1465,7 +1475,7 @@ function correctDeltaY (delta) {
     return delta;
 }
 
-function generateColor () {
+function generateColor (colorFactor) {
     let c = HSVtoRGB(Math.random(), 1.0, 1.0);
     c.r *= 0.15;
     c.g *= 0.15;

@@ -1,31 +1,31 @@
-function webaudio_tooling_obj() {
-    var audioContext = new AudioContext();
+audioContext = new AudioContext();
+
+timeRadius = 0;
+oldDrawX = 0;
+oldDrawY = 0;
+input = null;
+radius = 0;
+sprite = null;
+oldTime = 0;
+oldNote = 0;
+
+averageValue = 0;
+largestFreq = 0;
+largestValue = 0;
+currentValue = 0;
+
+BUFF_SIZE = 16384;
+
+audioInput = null,
+microphone_stream = null,
+gain_node = null,
+script_processor_node = null,
+script_processor_fft_node = null,
+analyserNode = null;
     
-	timeRadius = 0;
-	oldDrawX = 0;
-	oldDrawY = 0;
-	input = null;
-	radius = 0;
-	sprite = null;
-	oldTime = 0;
-	oldNote = 0;
-	
-	averageValue = 0;
-	largestFreq = 0;
-	largestValue = 0;
-	currentValue = 0;
-
-    var BUFF_SIZE = 16384;
-
-    var audioInput = null,
-        microphone_stream = null,
-        gain_node = null,
-        script_processor_node = null,
-        script_processor_fft_node = null,
-        analyserNode = null;
-
+function webaudio_tooling_obj() {
     if (!navigator.getUserMedia)
-            navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia ||
+            navigator.mediaDevices.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia ||
             navigator.mozGetUserMedia || navigator.msGetUserMedia;
 
     if (navigator.getUserMedia){
@@ -37,10 +37,10 @@ function webaudio_tooling_obj() {
               alert('getUserMedia: ' + e);
           }
         );
+    } else { alert('getUserMedia not supported in this browser.'); }  
+}
 
-    } else { alert('getUserMedia not supported in this browser.'); }
-
-     function start_microphone(stream){
+function start_microphone(stream){
 	      gain_node = audioContext.createGain();
 	      gain_node.connect( audioContext.destination );
 	
@@ -75,19 +75,31 @@ function webaudio_tooling_obj() {
              
              averageValue = averageValue / array.length - 1;
               
-             splats_n = parseInt(Math.round(averageValue / 40));
+             splats_n = parseInt(Math.round(averageValue / 25));
              
              largestValue = Math.max.apply(null, array);
              largestFreq = array.indexOf(largestValue);
-             colorFactor = largestFreq;
 
              if (splats_n >= 1){
-                multipleSplats(splats_n, colorFactor);
+                multipleSplats(splats_n);
              }
-
-             /*SPLAT_FORCE = largestValue;
-			 dominance = largestValue / averageValue; 
-             SPLAT_RADIUS = dominance / 5;*/
+             
+             config.SPLAT_RADIUS = largestValue / 200;
+             config.CURL = largestFreq * 4.5;
+             if (config.CURL > 150) config.CURL = 150;
          };      
      }
+
+async function getDevices() {     
+	const devices = await navigator.mediaDevices.enumerateDevices();
+	audioDevices = devices.filter(device => device.kind === 'audioinput');
+
+	navigator.getUserMedia( { audio: {deviceId: audioDevices[2].deviceId} },
+        function(stream) {
+    		start_microphone(stream);
+        },
+        function(e) {
+            alert(e);
+        }
+	);
 }
