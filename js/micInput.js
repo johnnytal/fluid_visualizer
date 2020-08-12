@@ -1,14 +1,5 @@
 audioContext = new AudioContext();
 
-timeRadius = 0;
-oldDrawX = 0;
-oldDrawY = 0;
-input = null;
-radius = 0;
-sprite = null;
-oldTime = 0;
-oldNote = 0;
-
 averageValue = 0;
 largestFreq = 0;
 largestValue = 0;

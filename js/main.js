@@ -51,15 +51,10 @@ pointers.push(new pointerPrototype());
 
 const { gl, ext } = getWebGLContext(canvas);
 
-if (isMobile()) {
-    config.DYE_RESOLUTION = 512;
-}
 if (!ext.supportLinearFiltering) {
-    config.DYE_RESOLUTION = 512;
     config.SHADING = false;
     config.BLOOM = false;
     config.SUNRAYS = false;
-
 }
 
 startGUI();
@@ -195,33 +190,22 @@ function supportRenderTextureFormat (gl, internalFormat, format, type) {
 }
 
 function startGUI () {
-    var gui = new dat.GUI({ width: 300 });
-    gui.add(config, 'DYE_RESOLUTION', { 'high': 1024, 'medium': 512, 'low': 256, 'very low': 128 }).name('quality').onFinishChange(initFramebuffers);
-    gui.add(config, 'SIM_RESOLUTION', { '32': 32, '64': 64, '128': 128, '256': 256 }).name('sim resolution').onFinishChange(initFramebuffers);
-    gui.add(config, 'DENSITY_DISSIPATION', 0, 4.0).name('density diffusion');
-    gui.add(config, 'VELOCITY_DISSIPATION', 0, 4.0).name('velocity diffusion');
-    gui.add(config, 'PRESSURE', 0.0, 1.0).name('pressure');
-    gui.add(config, 'CURL', 0, 50).name('vorticity').step(1);
-    gui.add(config, 'SPLAT_RADIUS', 0.01, 1.0).name('splat radius');
-    gui.add(config, 'SHADING').name('shading').onFinishChange(updateKeywords);
-    gui.add(config, 'COLORFUL').name('colorful');
+    gui = new dat.GUI({ width: 300 });
+    gui.add(config, 'DYE_RESOLUTION', { 'Very low': 128, 'Low': 256, 'Medium': 512, 'High': 1024 }).name('Quality').onFinishChange(initFramebuffers);
+    gui.add(config, 'SIM_RESOLUTION', { 'Very low': 32, 'Low': 64, 'Medium': 128, 'High': 256 }).name('Resolution').onFinishChange(initFramebuffers);
+    gui.add(config, 'DENSITY_DISSIPATION', 0, 4.0).name('Density');
+    gui.add(config, 'VELOCITY_DISSIPATION', 0, 4.0).name('Velocity');
+    gui.add(config, 'PRESSURE', 0.0, 1.0).name('Pressure');
+    gui.add(config, 'CURL', 0, 50).name('Vorticity').step(1);
+    gui.add(config, 'SPLAT_RADIUS', 0.01, 1.0).name('Splat radius');
+    gui.addColor(config, 'BACK_COLOR').name('Background color');
 
-    gui.add({ fun: () => {
-        splatStack.push(parseInt(Math.random() * 20) + 5);
-    } }, 'fun').name('Random splats');
-
-    let bloomFolder = gui.addFolder('Bloom');
-    bloomFolder.add(config, 'BLOOM').name('enabled').onFinishChange(updateKeywords);
-    bloomFolder.add(config, 'BLOOM_INTENSITY', 0.1, 2.0).name('intensity');
-    bloomFolder.add(config, 'BLOOM_THRESHOLD', 0.0, 1.0).name('threshold');
-
-    let sunraysFolder = gui.addFolder('Sunrays');
-    sunraysFolder.add(config, 'SUNRAYS').name('enabled').onFinishChange(updateKeywords);
-    sunraysFolder.add(config, 'SUNRAYS_WEIGHT', 0.3, 1.0).name('weight');
-
-    let captureFolder = gui.addFolder('Capture');
-    captureFolder.addColor(config, 'BACK_COLOR').name('background color');
-    captureFolder.add(config, 'TRANSPARENT').name('transparent');
+    gui.add(config, 'SHADING').name('Shading').onFinishChange(updateKeywords);
+    gui.add(config, 'COLORFUL').name('Colorful');
+    
+    gui.add(config, 'BLOOM').name('Enable bloom').onFinishChange(updateKeywords);
+    gui.add(config, 'BLOOM_INTENSITY', 0.1, 2.0).name('Bloom Intensity');
+    gui.add(config, 'BLOOM_THRESHOLD', 0.0, 1.0).name('Bloom Threshold');
 
     if (isMobile()) gui.close();
 }
@@ -269,15 +253,6 @@ function textureToCanvas (texture, width, height) {
     ctx.putImageData(imageData, 0, 0);
 
     return captureCanvas;
-}
-
-function downloadURI (filename, uri) {
-    let link = document.createElement('a');
-    link.download = filename;
-    link.href = uri;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
 }
 
 class Material {
@@ -1122,11 +1097,12 @@ function updateColors (dt) {
     }
 }
 
-function applyInputs () {
+function applyInputs() {
     if (splatStack.length > 0)
         multipleSplats(splatStack.pop());
 
     pointers.forEach(p => {
+
         if (p.moved) {
             p.moved = false;
             splatPointer(p);
@@ -1223,10 +1199,8 @@ function render (target) {
     gl.viewport(0, 0, width, height);
 
     let fbo = target == null ? null : target.fbo;
-    if (!config.TRANSPARENT)
-        drawColor(fbo, normalizeColor(config.BACK_COLOR));
-    if (target == null && config.TRANSPARENT)
-        drawCheckerboard(fbo);
+    drawColor(fbo, normalizeColor(config.BACK_COLOR));
+
     drawDisplay(fbo, width, height);
 }
 
@@ -1412,6 +1386,7 @@ canvas.addEventListener('touchstart', e => {
         let posY = scaleByPixelRatio(touches[i].pageY);
         updatePointerDownData(pointers[i + 1], touches[i].identifier, posX, posY);
     }
+   
 });
 
 canvas.addEventListener('touchmove', e => {
@@ -1428,8 +1403,7 @@ canvas.addEventListener('touchmove', e => {
 
 window.addEventListener('touchend', e => {
     const touches = e.changedTouches;
-    for (let i = 0; i < touches.length; i++)
-    {
+    for (let i = 0; i < touches.length; i++){
         let pointer = pointers.find(p => p.id == touches[i].identifier);
         if (pointer == null) continue;
         updatePointerUpData(pointer);
@@ -1447,6 +1421,7 @@ function updatePointerDownData (pointer, id, posX, posY) {
     pointer.deltaX = 0;
     pointer.deltaY = 0;
     pointer.color = generateColor();
+    gui.close();
 }
 
 function updatePointerMoveData (pointer, posX, posY) {
