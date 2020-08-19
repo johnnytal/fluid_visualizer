@@ -3,7 +3,8 @@ audioContext = new AudioContext();
 averageValue = 0;
 largestFreq = 0;
 largestValue = 0;
-luminosity = 0;
+AccelY = 0;
+lastAccelY = 0;
 
 BUFF_SIZE = 16384;
 
@@ -70,36 +71,38 @@ function start_microphone(stream){
 
 			 if (config.OPTION == 0){
 				 splats_n = parseInt(Math.round(averageValue / 25));
-				 if (splats_n > 25) splats_n = 25;
-				 if (luminosity > 0){
-				 	window.plugin.lightsensor.stop();
-				 	luminosity = 0;
-				 }
              }
              else if (config.OPTION == 1){
 	             splats_n = Math.round(largestFreq / 8);
-	             if (splats_n > 25) splats_n = 25;
- 				 if (luminosity > 0){
-				 	window.plugin.lightsensor.stop();
-				 	luminosity = 0;
-				 }
              }
              else if (config.OPTION == 2){
-             	 watchReading();
-             	 splats_n = Math.round(luminosity / 30);
-             	 if (splats_n > 50) splats_n = 50;
+             	 window.addEventListener("devicemotion", readAccel, true);  
              }
              
+             if (splats_n > 20) splats_n = 20;
              if (splats_n >= 1){
          		 multipleSplats(splats_n);
              }
-             
+
              config.SPLAT_RADIUS = largestValue / 200;
 
              config.CURL = largestFreq * 4;
              if (config.CURL > 130) config.CURL = 130;
          };      
      }
+
+function readAccel(event){
+	if (config.OPTION == 2){
+		if (Math.abs(event.accelerationIncludingGravity.y - lastAccelY) > 1){
+			AccelY = event.accelerationIncludingGravity.y;
+			
+			splats_n = Math.round(AccelY / 2);   	
+			multipleSplats(splats_n);
+			
+			lastAccelY = AccelY;
+		}
+	}
+}
 
 async function getDevices() {     
 	const devices = await navigator.mediaDevices.enumerateDevices();
@@ -113,15 +116,4 @@ async function getDevices() {
             alert(e);
         }
 	);
-}
-
-function watchReading(){
-    window.plugin.lightsensor.watchReadings(
-		function success(reading){
-	        luminosity = parseInt(reading.intensity);
-	    }, 
-	    function error(message){
-	    	alert('error ' + message);
-	    }
-    );
 }
