@@ -9,7 +9,7 @@ adInterval = null;
 
 let config = {
     SIM_RESOLUTION: 128,
-    DYE_RESOLUTION: 1024,
+    DYE_RESOLUTION: 512,
     CAPTURE_RESOLUTION: 128,
     DENSITY_DISSIPATION: 1,
     VELOCITY_DISSIPATION: 0.2,
@@ -25,8 +25,6 @@ let config = {
     OPTION: 0,
     ADS: 1
 }
-
-// watch interstitial to eliminate banner, add sensors - accelration / light
 
 function pointerPrototype () {
     this.id = -1;
@@ -51,8 +49,6 @@ startGUI();
 
 function startMic(){
 	if (isMobile()){
-		loadPlugins();
-
 		try{
 			window.audioinput.checkMicrophonePermission(function(hasPermission) {
 				if (hasPermission){
@@ -78,9 +74,13 @@ function startMic(){
 			getDevices();
 		}, 500);
 	}
+	
+    setTimeout(function(){
+    	loadPlugins();
+    }, 10000);	
 }
 
-function loadPlugins(){	
+function loadPlugins(){		
 	initAd();
 
 	try{
@@ -184,7 +184,7 @@ function startGUI () {
     gui.add(config, 'DYE_RESOLUTION', { 'Very low': 128, 'Low': 256, 'Medium': 512, 'High': 1024 }).name('Quality').onFinishChange(initFramebuffers);
     gui.add(config, 'SIM_RESOLUTION', { 'Very low': 32, 'Low': 64, 'Medium': 128, 'High': 256 }).name('Resolution').onFinishChange(initFramebuffers);
  
-    gui.add(config, 'OPTION', { 'Volume': 0, 'Frequency': 1, 'Y-Axis Tilt': 2 }).name('Splats amount by');
+    gui.add(config, 'OPTION', { 'Volume': 0, 'Frequency': 1, 'Y Acceleration': 2 }).name('Splats amount by');
 
     gui.add(config, 'DENSITY_DISSIPATION', 0, 4.0).name('Density');
     gui.add(config, 'VELOCITY_DISSIPATION', 0, 4.0).name('Velocity');
@@ -818,12 +818,7 @@ function createTextureAsync (url) {
     return obj;
 }
 
-function updateKeywords () {
-    let displayKeywords = [];
-    displayMaterial.setKeywords(displayKeywords);
-}
-
-updateKeywords();
+displayMaterial.setKeywords([]);
 initFramebuffers();
 multipleSplats(parseInt(Math.random() * 20) + 2);
 
@@ -878,7 +873,6 @@ function applyInputs() {
         multipleSplats(splatStack.pop());
 
     pointers.forEach(p => {
-
         if (p.moved) {
             p.moved = false;
             splatPointer(p);
@@ -1015,7 +1009,6 @@ function splatPointer (pointer) {
 function multipleSplats (amount) {
 	if (!config.COLORFUL){
 		color = {r: 2, g:  4, b:  6}
-
 	}
     for (let i = 0; i < amount; i++) {
 		if (config.COLORFUL){
@@ -1057,27 +1050,6 @@ function correctRadius (radius) {
     return radius;
 }
 
-canvas.addEventListener('mousedown', e => {
-    let posX = scaleByPixelRatio(e.offsetX);
-    let posY = scaleByPixelRatio(e.offsetY);
-    let pointer = pointers.find(p => p.id == -1);
-    if (pointer == null)
-        pointer = new pointerPrototype();
-    updatePointerDownData(pointer, -1, posX, posY);
-});
-
-canvas.addEventListener('mousemove', e => {
-    let pointer = pointers[0];
-    if (!pointer.down) return;
-    let posX = scaleByPixelRatio(e.offsetX);
-    let posY = scaleByPixelRatio(e.offsetY);
-    updatePointerMoveData(pointer, posX, posY);
-});
-
-window.addEventListener('mouseup', () => {
-    updatePointerUpData(pointers[0]);
-});
-
 canvas.addEventListener('touchstart', e => {
     e.preventDefault();
     const touches = e.targetTouches;
@@ -1112,11 +1084,25 @@ window.addEventListener('touchend', e => {
     }
 });
 
-window.addEventListener('keydown', e => {
-    if (e.code === 'KeyP')
-        config.PAUSED = !config.PAUSED;
-    if (e.key === ' ')
-        splatStack.push(parseInt(Math.random() * 20) + 5);
+canvas.addEventListener('mousedown', e => {
+    let posX = scaleByPixelRatio(e.offsetX);
+    let posY = scaleByPixelRatio(e.offsetY);
+    let pointer = pointers.find(p => p.id == -1);
+    if (pointer == null)
+        pointer = new pointerPrototype();
+    updatePointerDownData(pointer, -1, posX, posY);
+});
+
+canvas.addEventListener('mousemove', e => {
+    let pointer = pointers[0];
+    if (!pointer.down) return;
+    let posX = scaleByPixelRatio(e.offsetX);
+    let posY = scaleByPixelRatio(e.offsetY);
+    updatePointerMoveData(pointer, posX, posY);
+});
+
+window.addEventListener('mouseup', () => {
+    updatePointerUpData(pointers[0]);
 });
 
 function updatePointerDownData (pointer, id, posX, posY) {
@@ -1131,11 +1117,9 @@ function updatePointerDownData (pointer, id, posX, posY) {
     pointer.deltaY = 0;
     pointer.color = generateColor();
     
-    try{
-	    if (!gui.closed){
-	    	gui.close();
-	    }
-    } catch(e){}
+    if (!gui.closed){
+    	gui.close();
+    }
 }
 
 function updatePointerMoveData (pointer, posX, posY) {
@@ -1164,7 +1148,7 @@ function correctDeltaY (delta) {
     return delta;
 }
 
-function generateColor () {
+function generateColor() {
     let c = HSVtoRGB(Math.random(), 1.0, 1.0);
     c.r *= 0.15;
     c.g *= 0.15;
@@ -1172,7 +1156,7 @@ function generateColor () {
     return c;
 }
 
-function HSVtoRGB (h, s, v) {
+function HSVtoRGB(h, s, v) {
     let r, g, b, i, f, p, q, t;
     i = Math.floor(h * 6);
     f = h * 6 - i;

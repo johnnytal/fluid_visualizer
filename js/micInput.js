@@ -14,7 +14,7 @@ gain_node = null,
 script_processor_node = null,
 script_processor_fft_node = null,
 analyserNode = null;
-    
+
 function webaudio_tooling_obj() {
     if (!navigator.getUserMedia)
             navigator.mediaDevices.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia ||
