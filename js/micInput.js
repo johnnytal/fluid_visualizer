@@ -3,6 +3,7 @@ audioContext = new AudioContext();
 averageValue = 0;
 largestFreq = 0;
 largestValue = 0;
+luminosity = 0;
 
 BUFF_SIZE = 16384;
 
@@ -69,9 +70,24 @@ function start_microphone(stream){
 
 			 if (config.OPTION == 0){
 				 splats_n = parseInt(Math.round(averageValue / 25));
+				 if (splats_n > 25) splats_n = 25;
+				 if (luminosity > 0){
+				 	window.plugin.lightsensor.stop();
+				 	luminosity = 0;
+				 }
              }
-             else{
-	             splats_n = Math.round(largestFreq / 2);
+             else if (config.OPTION == 1){
+	             splats_n = Math.round(largestFreq / 8);
+	             if (splats_n > 25) splats_n = 25;
+ 				 if (luminosity > 0){
+				 	window.plugin.lightsensor.stop();
+				 	luminosity = 0;
+				 }
+             }
+             else if (config.OPTION == 2){
+             	 watchReading();
+             	 splats_n = Math.round(luminosity / 30);
+             	 if (splats_n > 50) splats_n = 50;
              }
              
              if (splats_n >= 1){
@@ -97,4 +113,15 @@ async function getDevices() {
             alert(e);
         }
 	);
+}
+
+function watchReading(){
+    window.plugin.lightsensor.watchReadings(
+		function success(reading){
+	        luminosity = parseInt(reading.intensity);
+	    }, 
+	    function error(message){
+	    	alert('error ' + message);
+	    }
+    );
 }
