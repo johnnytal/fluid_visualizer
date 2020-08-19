@@ -76,7 +76,7 @@ function startMic(){
 	
     setTimeout(function(){
     	loadPlugins();
-    }, 10000);	
+    }, 5000);	
 }
 
 function loadPlugins(){		
@@ -1230,8 +1230,7 @@ function hashCode (s) {
 
 function initAd(){
 	admobid = {
-    	banner: 'ca-app-pub-9795366520625065/7943701608',
-    	interstitial: 'ca-app-pub-9795366520625065/5503034199'
+    	banner: 'ca-app-pub-9795366520625065/7943701608'
     };
     
     if(AdMob) AdMob.createBanner({
@@ -1239,9 +1238,4 @@ function initAd(){
 	    position: AdMob.AD_POSITION.BOTTOM_CENTER,
     	autoShow: true
 	});
-	
-  	if(AdMob) AdMob.prepareInterstitial({
-  		adId: admobid.interstitial, 
-  		autoShow: true
-  	});
 }
