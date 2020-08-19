@@ -81,9 +81,7 @@ function startMic(){
 }
 
 function loadPlugins(){	
-	setTimeout(function(){
-		initAd();
-	}, 7500);
+	initAd();
 
 	try{
         StatusBar.hide();
@@ -186,7 +184,7 @@ function startGUI () {
     gui.add(config, 'DYE_RESOLUTION', { 'Very low': 128, 'Low': 256, 'Medium': 512, 'High': 1024 }).name('Quality').onFinishChange(initFramebuffers);
     gui.add(config, 'SIM_RESOLUTION', { 'Very low': 32, 'Low': 64, 'Medium': 128, 'High': 256 }).name('Resolution').onFinishChange(initFramebuffers);
  
-    gui.add(config, 'OPTION', { 'Volume': 0, 'Frequency': 1, 'Ambient light' : 2 }).name('Splats amount by');
+    gui.add(config, 'OPTION', { 'Volume': 0, 'Frequency': 1, 'Y-Axis Tilt': 2 }).name('Splats amount by');
 
     gui.add(config, 'DENSITY_DISSIPATION', 0, 4.0).name('Density');
     gui.add(config, 'VELOCITY_DISSIPATION', 0, 4.0).name('Velocity');
@@ -196,7 +194,7 @@ function startGUI () {
 
     gui.add(config, 'COLORFUL').name('Colorful');
     
-    gui.add(config, 'ADS', {'Banners (cont.)': 0, 'Interstitial (1/60 secs)': 1}).name('Preferred ads').onFinishChange(changeAds);
+    gui.add(config, 'ADS', {'Banners (cont.)': 0, 'Interstitial (1/45 secs)': 1}).name('Preferred ads').onFinishChange(changeAds);
 
     if (isMobile()) gui.close();
 }
@@ -1259,12 +1257,12 @@ function changeAds(){
 	}
 	else{
 		try{AdMob.hideBanner()}catch(e){};
-		
-		AdMob.showInterstitial();
-		
+
 		adInterval = setInterval(function(){
         	AdMob.showInterstitial();
-        }, 60000)
+        }, 45000)
+        
+        AdMob.showInterstitial();
 	}
 }
 
@@ -1282,7 +1280,7 @@ function initAd(){
 	
   	if(AdMob) AdMob.prepareInterstitial({
   		adId: admobid.interstitial, 
-  		autoShow: false
+  		autoShow: true
   	});
   	
   	changeAds();
