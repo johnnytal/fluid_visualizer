@@ -77,7 +77,7 @@ function startMic(){
 	
     setTimeout(function(){
     	loadPlugins();
-    }, 10000);	
+    }, 12000);	
 }
 
 function loadPlugins(){		
@@ -1245,8 +1245,6 @@ function changeAds(){
 		adInterval = setInterval(function(){
         	AdMob.showInterstitial();
         }, 45000)
-        
-        AdMob.showInterstitial();
 	}
 }
 
@@ -1267,5 +1265,7 @@ function initAd(){
   		autoShow: true
   	});
   	
+	AdMob.showInterstitial();
+  		
   	changeAds();
 }
