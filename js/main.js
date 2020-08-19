@@ -1240,11 +1240,13 @@ function changeAds(){
 		}
 	}
 	else{
-		try{AdMob.hideBanner()}catch(e){};
-
+		AdMob.showInterstitial();
+		
 		adInterval = setInterval(function(){
         	AdMob.showInterstitial();
-        }, 45000)
+        }, 45000);
+        
+        try{AdMob.hideBanner()}catch(e){};
 	}
 }
 
@@ -1262,10 +1264,8 @@ function initAd(){
 	
   	if(AdMob) AdMob.prepareInterstitial({
   		adId: admobid.interstitial, 
-  		autoShow: true
+  		autoShow: false
   	});
-  	
-	AdMob.showInterstitial();
-  		
+
   	changeAds();
 }
