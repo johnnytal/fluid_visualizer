@@ -1,7 +1,6 @@
 document.addEventListener("deviceready", startMic, false);
 
 //startMic();
-loadPlugins();
 	
 const canvas = document.getElementsByTagName('canvas')[0];
 resizeCanvas();
@@ -67,6 +66,8 @@ startGUI();
 
 function startMic(){
 	if (isMobile()){
+		loadPlugins();
+		
 		try{
 			window.audioinput.checkMicrophonePermission(function(hasPermission) {
 				if (hasPermission){
@@ -78,13 +79,13 @@ function startMic(){
 							webaudio_tooling_obj();		
 			        	}
 			        	else{
-			        		alert('Microphone permission needed for app to work!');
+			        		alert('Please give microphone permission via Settings > Apps!');
 			        	}
 			        });
 			    }
 			});
 		} catch(e){
-			alert('Please give microphone permission via Settings > Apps ' + e);
+			alert('Please give microphone permission via Settings > Apps! ' + e);
 		}	
 	}
 	else{
