@@ -23,7 +23,7 @@ let config = {
     BACK_COLOR: { r: 0, g: 0, b: 0 },
     TRANSPARENT: false,
     OPTION: 0,
-    ADS: 0
+    ADS: 1
 }
 
 // watch interstitial to eliminate banner, add sensors - accelration / light
@@ -51,10 +51,8 @@ startGUI();
 
 function startMic(){
 	if (isMobile()){
-		setTimeout(function(){
-			loadPlugins();
-		}, 2500);
-		
+		loadPlugins();
+
 		try{
 			window.audioinput.checkMicrophonePermission(function(hasPermission) {
 				if (hasPermission){
@@ -83,7 +81,9 @@ function startMic(){
 }
 
 function loadPlugins(){	
-	initAd();
+	setTimeout(function(){
+		initAd();
+	}, 7500);
 
 	try{
         StatusBar.hide();
@@ -827,7 +827,7 @@ function updateKeywords () {
 
 updateKeywords();
 initFramebuffers();
-multipleSplats(parseInt(Math.random() * 20) + 5);
+multipleSplats(parseInt(Math.random() * 20) + 2);
 
 let lastUpdateTime = Date.now();
 let colorUpdateTimer = 0.0;
@@ -1015,13 +1015,17 @@ function splatPointer (pointer) {
 }
 
 function multipleSplats (amount) {
-    for (let i = 0; i < amount; i++) {
- 
-        const color = generateColor();
-        color.r *= 10.0;
-        color.g *= 10.0;
-        color.b *= 10.0;
+	if (!config.COLORFUL){
+		color = {r: 2, g:  4, b:  6}
 
+	}
+    for (let i = 0; i < amount; i++) {
+		if (config.COLORFUL){
+	         color = generateColor();
+		        color.r *= 10.0;
+		        color.g *= 10.0;
+		        color.b *= 10.0;
+		}
         const x = Math.random();
         const y = Math.random();
         const dx = 1000 * (Math.random() - 0.5);
@@ -1254,7 +1258,7 @@ function changeAds(){
 		}
 	}
 	else{
-		AdMob.hideBanner();
+		try{AdMob.hideBanner()}catch(e){};
 		
 		AdMob.showInterstitial();
 		
@@ -1273,11 +1277,13 @@ function initAd(){
     if(AdMob) AdMob.createBanner({
 	    adId: admobid.banner,
 	    position: AdMob.AD_POSITION.BOTTOM_CENTER,
-    	autoShow: true
+    	autoShow: false
 	});
 	
   	if(AdMob) AdMob.prepareInterstitial({
   		adId: admobid.interstitial, 
   		autoShow: false
   	});
+  	
+  	changeAds();
 }

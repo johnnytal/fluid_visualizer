@@ -85,18 +85,17 @@ function start_microphone(stream){
              }
 
              config.SPLAT_RADIUS = largestValue / 200;
-
-             config.CURL = largestFreq * 4;
-             if (config.CURL > 130) config.CURL = 130;
+             config.CURL = Math.round(largestFreq * 4.2);
+             if (config.CURL > 135) config.CURL = 135;
          };      
      }
 
 function readAccel(event){
 	if (config.OPTION == 2){
-		if (Math.abs(event.accelerationIncludingGravity.y - lastAccelY) > 1){
+		if (Math.abs(event.accelerationIncludingGravity.y - lastAccelY) > 0.8){
 			AccelY = event.accelerationIncludingGravity.y;
 			
-			splats_n = Math.round(AccelY / 2);   	
+			splats_n = Math.round(AccelY / 1.75);   	
 			multipleSplats(splats_n);
 			
 			lastAccelY = AccelY;
