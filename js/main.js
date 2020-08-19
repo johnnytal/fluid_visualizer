@@ -665,8 +665,6 @@ let divergence;
 let curl;
 let pressure;
 
-let ditheringTexture = createTextureAsync('LDR_LLL1_0.png');
-
 const blurProgram            = new Program(blurVertexShader, blurShader);
 const copyProgram            = new Program(baseVertexShader, copyShader);
 const clearProgram           = new Program(baseVertexShader, clearShader);
@@ -1088,7 +1086,6 @@ canvas.addEventListener('touchstart', e => {
         let posY = scaleByPixelRatio(touches[i].pageY);
         updatePointerDownData(pointers[i + 1], touches[i].identifier, posX, posY);
     }
-   
 });
 
 canvas.addEventListener('touchmove', e => {
@@ -1105,11 +1102,19 @@ canvas.addEventListener('touchmove', e => {
 
 window.addEventListener('touchend', e => {
     const touches = e.changedTouches;
-    for (let i = 0; i < touches.length; i++){
+    for (let i = 0; i < touches.length; i++)
+    {
         let pointer = pointers.find(p => p.id == touches[i].identifier);
         if (pointer == null) continue;
         updatePointerUpData(pointer);
     }
+});
+
+window.addEventListener('keydown', e => {
+    if (e.code === 'KeyP')
+        config.PAUSED = !config.PAUSED;
+    if (e.key === ' ')
+        splatStack.push(parseInt(Math.random() * 20) + 5);
 });
 
 function updatePointerDownData (pointer, id, posX, posY) {
@@ -1124,9 +1129,11 @@ function updatePointerDownData (pointer, id, posX, posY) {
     pointer.deltaY = 0;
     pointer.color = generateColor();
     
-    if (!gui.closed){
-    	gui.close();
-    }
+    try{
+	    if (!gui.closed){
+	    	gui.close();
+	    }
+    } catch(e){}
 }
 
 function updatePointerMoveData (pointer, posX, posY) {
@@ -1155,7 +1162,7 @@ function correctDeltaY (delta) {
     return delta;
 }
 
-function generateColor (colorFactor) {
+function generateColor () {
     let c = HSVtoRGB(Math.random(), 1.0, 1.0);
     c.r *= 0.15;
     c.g *= 0.15;
@@ -1235,7 +1242,6 @@ function hashCode (s) {
         hash = (hash << 5) - hash + s.charCodeAt(i);
         hash |= 0; // Convert to 32bit integer
     }
-   
     return hash;
 };
 
