@@ -32,6 +32,7 @@ let config = {
     SUNRAYS: true,
     SUNRAYS_RESOLUTION: 196,
     SUNRAYS_WEIGHT: 1.0,
+    OPTION: 0,
     ADS: 0
 }
 
@@ -66,7 +67,9 @@ startGUI();
 
 function startMic(){
 	if (isMobile()){
-		loadPlugins();
+		setTimeout(function(){
+			loadPlugins();
+		}, 2500);
 		
 		try{
 			window.audioinput.checkMicrophonePermission(function(hasPermission) {
@@ -95,15 +98,15 @@ function startMic(){
 	}
 }
 
-function loadPlugins(){
+function loadPlugins(){	
 	initAd();
-	
+
 	try{
         StatusBar.hide();
     } catch(e){} 
     try{
         window.plugins.insomnia.keepAwake();
-    } catch(e){}   
+    } catch(e){}   	
 }
 
 function getWebGLContext (canvas) {
@@ -198,11 +201,13 @@ function startGUI () {
     gui = new dat.GUI({ width: 300 });
     gui.add(config, 'DYE_RESOLUTION', { 'Very low': 128, 'Low': 256, 'Medium': 512, 'High': 1024 }).name('Quality').onFinishChange(initFramebuffers);
     gui.add(config, 'SIM_RESOLUTION', { 'Very low': 32, 'Low': 64, 'Medium': 128, 'High': 256 }).name('Resolution').onFinishChange(initFramebuffers);
+ 
+    gui.add(config, 'OPTION', { 'Volume': 0, 'Frequency': 1 }).name('Amount of splats by');
+
     gui.add(config, 'DENSITY_DISSIPATION', 0, 4.0).name('Density');
     gui.add(config, 'VELOCITY_DISSIPATION', 0, 4.0).name('Velocity');
     gui.add(config, 'PRESSURE', 0.0, 1.0).name('Pressure');
-    gui.add(config, 'CURL', 0, 50).name('Vorticity').step(1);
-    gui.add(config, 'SPLAT_RADIUS', 0.01, 1.0).name('Splat radius');
+
     gui.addColor(config, 'BACK_COLOR').name('Background color');
 
     gui.add(config, 'SHADING').name('Shading').onFinishChange(updateKeywords);
@@ -212,7 +217,7 @@ function startGUI () {
     gui.add(config, 'BLOOM_INTENSITY', 0.1, 2.0).name('Bloom Intensity');
     gui.add(config, 'BLOOM_THRESHOLD', 0.0, 1.0).name('Bloom Threshold');
     
-    gui.add(config, 'ADS', {'Banners (cont.)': 0, 'Interstitial (1/60 secs)': 1}).name('Ads').onFinishChange(changeAds);
+    gui.add(config, 'ADS', {'Banners (cont.)': 0, 'Interstitial (1/60 secs)': 1}).name('Preferred ads').onFinishChange(changeAds);
 
     if (isMobile()) gui.close();
 }

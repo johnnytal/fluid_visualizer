@@ -63,20 +63,25 @@ function start_microphone(stream){
             	 averageValue += array[i];
              }
              
-             averageValue = averageValue / array.length - 1;
-              
-             splats_n = parseInt(Math.round(averageValue / 25));
-             
+             averageValue = averageValue / array.length - 1; 
              largestValue = Math.max.apply(null, array);
              largestFreq = array.indexOf(largestValue);
 
+			 if (config.OPTION == 0){
+				 splats_n = parseInt(Math.round(averageValue / 25));
+             }
+             else{
+	             splats_n = Math.round(largestFreq / 2);
+             }
+             
              if (splats_n >= 1){
-             	multipleSplats(splats_n);
+         		 multipleSplats(splats_n);
              }
              
              config.SPLAT_RADIUS = largestValue / 200;
-             config.CURL = largestFreq * 4.5;
-             if (config.CURL > 150) config.CURL = 150;
+
+             config.CURL = largestFreq * 4;
+             if (config.CURL > 130) config.CURL = 130;
          };      
      }
 
