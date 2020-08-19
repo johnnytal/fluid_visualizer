@@ -22,8 +22,7 @@ let config = {
     COLOR_UPDATE_SPEED: 45,
     BACK_COLOR: { r: 0, g: 0, b: 0 },
     TRANSPARENT: false,
-    OPTION: 0,
-    ADS: 1
+    OPTION: 0
 }
 
 function pointerPrototype () {
@@ -77,7 +76,7 @@ function startMic(){
 	
     setTimeout(function(){
     	loadPlugins();
-    }, 12000);	
+    }, 10000);	
 }
 
 function loadPlugins(){		
@@ -194,8 +193,6 @@ function startGUI () {
 
     gui.add(config, 'COLORFUL').name('Colorful');
     
-    gui.add(config, 'ADS', {'Banners (cont.)': 0, 'Interstitial (1/45 secs)': 1}).name('Preferred ads').onFinishChange(changeAds);
-
     if (isMobile()) gui.close();
 }
 
@@ -1231,25 +1228,6 @@ function hashCode (s) {
     return hash;
 };
 
-function changeAds(){
-	if (config.ADS == 0){
-		AdMob.showBanner();
-		
-		if (adInterval != null){
-			clearInterval(adInterval);
-		}
-	}
-	else{
-		AdMob.showInterstitial();
-		
-		adInterval = setInterval(function(){
-        	AdMob.showInterstitial();
-        }, 45000);
-        
-        try{AdMob.hideBanner()}catch(e){};
-	}
-}
-
 function initAd(){
 	admobid = {
     	banner: 'ca-app-pub-9795366520625065/7943701608',
@@ -1259,13 +1237,11 @@ function initAd(){
     if(AdMob) AdMob.createBanner({
 	    adId: admobid.banner,
 	    position: AdMob.AD_POSITION.BOTTOM_CENTER,
-    	autoShow: false
+    	autoShow: true
 	});
 	
   	if(AdMob) AdMob.prepareInterstitial({
   		adId: admobid.interstitial, 
-  		autoShow: false
+  		autoShow: true
   	});
-
-  	changeAds();
 }
