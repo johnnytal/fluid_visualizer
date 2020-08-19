@@ -1,9 +1,12 @@
 document.addEventListener("deviceready", startMic, false);
 
+//startMic();
+loadPlugins();
+	
 const canvas = document.getElementsByTagName('canvas')[0];
 resizeCanvas();
 
-var averageValue;
+adInterval = null;
 
 let config = {
     SIM_RESOLUTION: 128,
@@ -21,16 +24,19 @@ let config = {
     COLOR_UPDATE_SPEED: 45,
     BACK_COLOR: { r: 0, g: 0, b: 0 },
     TRANSPARENT: false,
-    BLOOM: false,
+    BLOOM: true,
     BLOOM_ITERATIONS: 8,
     BLOOM_RESOLUTION: 128,
-    BLOOM_INTENSITY: 0.8,
-    BLOOM_THRESHOLD: 0.6,
+    BLOOM_INTENSITY: 0.25,
+    BLOOM_THRESHOLD: 0.5,
     BLOOM_SOFT_KNEE: 0.7,
     SUNRAYS: true,
     SUNRAYS_RESOLUTION: 196,
     SUNRAYS_WEIGHT: 1.0,
+    ADS: 0
 }
+
+// watch interstitial to eliminate banner, add sensors - accelration / light
 
 function pointerPrototype () {
     this.id = -1;
@@ -60,8 +66,6 @@ if (!ext.supportLinearFiltering) {
 startGUI();
 
 function startMic(){
-	loadPlugins();
-	
 	if (isMobile()){
 		try{
 			window.audioinput.checkMicrophonePermission(function(hasPermission) {
@@ -206,6 +210,8 @@ function startGUI () {
     gui.add(config, 'BLOOM').name('Enable bloom').onFinishChange(updateKeywords);
     gui.add(config, 'BLOOM_INTENSITY', 0.1, 2.0).name('Bloom Intensity');
     gui.add(config, 'BLOOM_THRESHOLD', 0.0, 1.0).name('Bloom Threshold');
+    
+    gui.add(config, 'ADS', {'Banners (cont.)': 0, 'Interstitial (1/60 secs)': 1}).name('Ads').onFinishChange(changeAds);
 
     if (isMobile()) gui.close();
 }
@@ -240,19 +246,6 @@ function normalizeTexture (texture, width, height) {
 
 function clamp01 (input) {
     return Math.min(Math.max(input, 0), 1);
-}
-
-function textureToCanvas (texture, width, height) {
-    let captureCanvas = document.createElement('canvas');
-    let ctx = captureCanvas.getContext('2d');
-    captureCanvas.width = width;
-    captureCanvas.height = height;
-
-    let imageData = ctx.createImageData(width, height);
-    imageData.data.set(texture);
-    ctx.putImageData(imageData, 0, 0);
-
-    return captureCanvas;
 }
 
 class Material {
@@ -1530,12 +1523,33 @@ function hashCode (s) {
         hash = (hash << 5) - hash + s.charCodeAt(i);
         hash |= 0; // Convert to 32bit integer
     }
+   
     return hash;
 };
 
+function changeAds(){
+	if (config.ADS == 0){
+		AdMob.showBanner();
+		
+		if (adInterval != null){
+			clearInterval(adInterval);
+		}
+	}
+	else{
+		AdMob.hideBanner();
+		
+		AdMob.showInterstitial();
+		
+		adInterval = setInterval(function(){
+        	AdMob.showInterstitial();
+        }, 60000)
+	}
+}
+
 function initAd(){
 	admobid = {
-    	banner: 'ca-app-pub-9795366520625065/7943701608'
+    	banner: 'ca-app-pub-9795366520625065/7943701608',
+    	interstitial: 'ca-app-pub-9795366520625065/5503034199'
     };
     
     if(AdMob) AdMob.createBanner({
@@ -1543,4 +1557,9 @@ function initAd(){
 	    position: AdMob.AD_POSITION.BOTTOM_CENTER,
     	autoShow: true
 	});
+	
+  	if(AdMob) AdMob.prepareInterstitial({
+  		adId: admobid.interstitial, 
+  		autoShow: false
+  	});
 }

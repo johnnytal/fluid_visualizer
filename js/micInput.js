@@ -3,7 +3,6 @@ audioContext = new AudioContext();
 averageValue = 0;
 largestFreq = 0;
 largestValue = 0;
-currentValue = 0;
 
 BUFF_SIZE = 16384;
 
@@ -72,7 +71,7 @@ function start_microphone(stream){
              largestFreq = array.indexOf(largestValue);
 
              if (splats_n >= 1){
-                multipleSplats(splats_n);
+             	multipleSplats(splats_n);
              }
              
              config.SPLAT_RADIUS = largestValue / 200;
